@@ -1,12 +1,17 @@
 var net = require('net'),
 	fs = require('fs'),
 	iconv = require('iconv-lite'),
-	config = require('./config');
+	config = require('./config'),
+	mongo = require('mongodb').MongoClient;
 
-
+//init telnet connection
 var conn = net.connect(23,'ptt.cc');
 var inspect = require('util').inspect;
-
+//init mongodb connection
+var db_url = "mongodb://"+config.db_user+":"+config.db_passwd+"@"+config.db_host+"/"+config.db_database;
+if(config.db_host === "localhost"){
+	db_url = 'mongodb://'+config.db_host+'/'+config.db_database;
+}
 
 //connection setting
 conn.on('connect',function(){
@@ -19,7 +24,8 @@ var crawling_articles = false;
 var delete_article = false;
 var article_lines = [];
 var article_title = "";
-
+//count of crawling articles 
+var cnt = 10;
 
 //handle ptt page
 conn.on('data',function(data){
@@ -55,6 +61,11 @@ conn.on('data',function(data){
 			break;
 		case 'GOSSIPING_PAGE':
 			console.log("at gossiping page");
+			if(cnt == 0){
+				console.log("end crawling");
+				conn.destroy();
+				break;
+			}
 			crawling_articles=true;
 			delete_article = true;
 			conn.write("r");
@@ -73,13 +84,36 @@ conn.on('data',function(data){
 			if(lines[lines.length-1].indexOf("100%") != -1){
 				crawling_articles = false;
 				article = article_lines.join("\n");
+				
 				fs.writeFile('article.txt', article, function (err) {
 				  if (err) throw err;
 				  console.log('It\'s saved!');
 				});
+				mongo.connect(db_url,function(err,db){
+					if(err){
+						console.log(err);
+					}else{
+						//insert the article into db
+						var collection = db.collection("ptt_articles");
+						collection.insert({
+							title:article_title,
+							article:article,
+							create_time: new Date()
+						},function(err,result){
+							if(err){
+								console.log(err);
+							}else{
+								console.log("save article in mongodb");
+							}
+						});
+					}
+				});
+				cnt = cnt-1;
 				console.log("done");
 				//console.log(article);
 				article_lines = [];
+				crawling_articles = false;
+				conn.write("qk");
 			}else{
 				if(article_lines.length == 0){
 					//lines = (data.replace(/\x1b[[0-9;]*[mABCDHJKsu]/g,'')).split("\n");
@@ -87,11 +121,7 @@ conn.on('data',function(data){
 					article_title = lines[1].replace("標題","");
 					console.log("title: "+article_title);
 				}else{
-					console.log(lines.length);
-					//handle sending one line article
-					if(lines.length == 3){
-
-					}
+					//console.log(lines.length);
 					if(lines[lines.length-2] === article_lines[article_lines.length-1])
 						article_lines.push(lines[lines.length-2]);
 					else{
@@ -112,9 +142,14 @@ conn.on('end',function(){
 	console.log("disconnected from ptt ^^");
 });
 
+
+//functions
 function cur_location(data){
 	if(data.indexOf("任意鍵繼續") != -1)
 		return 'PRESS_CONTINUE_PAGE'; 
+
+	if(crawling_articles)
+		return 'CRAWLING_ARTICLE';
 
 	var check = ["密碼正確！開始登入系統...","正在檢查密碼...","會需時較久...","請稍後...","正在更新與同步線上使用者"];
 	for(i=0;i<check.length;i++)
@@ -151,9 +186,6 @@ function cur_location(data){
 
 	if(data.indexOf("看板《Gossiping》") != -1)
 		return 'GOSSIPING_PAGE';
-
-	if(crawling_articles)
-		return 'CRAWLING_ARTICLE';
 	
 	return 'UNKNOWN';
 }

@@ -1,0 +1,10 @@
+{
+	"name":"ptt-crawler",
+	"version":"0.0.1",
+	"private":true,
+	"dependencies":{
+		"iconv-lite":"*",
+		"keypress":"*",
+		"mongodb":"*"
+	}
+}

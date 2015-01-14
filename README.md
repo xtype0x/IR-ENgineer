@@ -13,14 +13,21 @@ crawler是抓PTT資料的程式。
 
 ## Installation
 
-crawler在使用前要先安裝一些套件，直接以下指令npm，要不要sudo還是-g不要我多說囉～  
+crawler在使用前要先安裝一些套件，直接以下指令～  
 
-`npm install iconv-lite`  
-`npm install keypress`  
+`npm install`
 
 ## About crawler
 
-目前程式只開發到只能抓PTT 八卦版的部分  
+目前程式只開發到只能抓PTT 八卦版的部分，並且會存進mongodb裡面
+格式如下
+table:ptt_articles
+{
+	title: 文章標題
+	article: 文章
+	create_time: 爬下來的時間
+}
+
 
 
 簡單說明一下裡面的檔案：  
