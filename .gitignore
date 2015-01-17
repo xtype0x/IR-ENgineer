@@ -1,3 +1,5 @@
 config.js
 node_modules/
 /wen-e/config.js
+**/.DS_Store
+/npm-debug.log

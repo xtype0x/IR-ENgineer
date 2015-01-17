@@ -36,10 +36,30 @@ exports.article_to_sentence = function(req, res){
    		if (err) throw err;
    		// console.log(data);
    		_.each(data,function(val){
-   			// console.log(val);
+
    			// var article_part = val.article.split("\r\n");
-   			_.each(val.article.split("\r\n"),function(val){
-   				console.log(val.replace(/^[\u0391-\uFFE5]+$/g,""));
+   			_.each(val.article.split("\r\n"),function(line){
+   				// console.log(":"+elem);
+
+   				var str = "";
+   				var per_line = line.replace(/^[\u0391-\uFFE5]+$/g,"");
+   				if(per_line!=""){
+   					// console.log("per_line :");
+   					console.log(per_line);
+   					// str+=per_line;
+   					// _.each(per_line.split(/[\uff0c\u3002]/),function(elem){
+   					// 	if(elem!=""){
+   							
+   					// 		// all.concat(elem);
+   					// 	}
+   						
+   					// });
+   					
+   					// console.log(per_line.split(/[\uff0c\u3002]/));
+
+   				}
+   				// console.log(str);
+   				// 
    			});
    			// console.log(article_part[0].replace(/^[\u0391-\uFFE5]+$/g,""));
    			// arr.push({"part":article_part,"from":val.title});
