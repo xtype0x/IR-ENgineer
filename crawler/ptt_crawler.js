@@ -33,7 +33,7 @@ conn.on('connect',function(){
 conn.on('data',function(data){
 	//convert the data first
 	data = iconv.decode(data,'big5');
-	console.log(data.replace(/\x1b[[0-9;]*[mABCDHJKsu]/g,'')+"\n--\n");
+	//console.log(data.replace(/\x1b[[0-9;]*[mABCDHJKsu]/g,'')+"\n--\n");
 	//data = data.replace('\u001b[H','');
 	//console.log("length: "+data.split("\r\n").length.toString());
 	
@@ -79,8 +79,8 @@ conn.on('data',function(data){
 						if(delete_article){
 							console.log("article not exists");
 							crawling_articles=false;
-							conn.write("kr\f");
-							crawling_articles=true;
+							loading_page = true;
+							conn.write("k\f");
 						}
 					},500);
 				}
@@ -92,12 +92,10 @@ conn.on('data',function(data){
 			lines = data.split("\n");
 			if(lines[lines.length-1].indexOf("100%") != -1){
 				crawling_articles = false;
+				article_lines = article_lines.slice(4);
 				article = article_lines.join("\n");
-				
-				fs.writeFile('article.txt', article, function (err) {
-				  if (err) throw err;
-				  console.log('It\'s saved!');
-				});
+				article = article.split("※ 發信站: 批踢踢實業坊")[0];
+				//save in mongodb
 				mongo.connect(db_url,function(err,db){
 					if(err){
 						console.log(err);
@@ -129,7 +127,7 @@ conn.on('data',function(data){
 					//lines = (data.replace(/\x1b[[0-9;]*[mABCDHJKsu]/g,'')).split("\n");
 					article_lines = lines.slice(0,lines.length-1);
 					article_title = lines[1].replace("標題","");
-					console.log("title: "+article_title);
+					//console.log("title: "+article_title);
 				}else{
 					//console.log(lines.length);
 					//if(lines[lines.length-2] === article_lines[article_lines.length-1])
