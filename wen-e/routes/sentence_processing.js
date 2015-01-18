@@ -97,7 +97,7 @@ exports.article_to_sentence = function(req, res){
             console.log(arr);
    			// console.log(article_part[0].replace(/^[\u0391-\uFFE5]+$/g,""));
    			json_arr.push({"content":arr,"from":each_article.title});
-            sentence.update({"content":arr,"from":each_article.title}, {$inc:{like:1}},{upsert:true}, function(err){
+            sentence.update({"content":arr,"from":each_article.title}, {$set: {"content":arr,"from":each_article.title}}, {upsert:true}, function(err){
                if(err) throw err;
                console.log('update ' + each_article.title + ' success');
             });
