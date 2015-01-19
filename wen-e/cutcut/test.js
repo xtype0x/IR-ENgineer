@@ -7,9 +7,23 @@ var sentence = '其他特殊字元沒問題';
 
 async.series([
 	function(callback){
-		terms.gen_by_word("秋",callback);
-	}
+		terms.gen_by_word("煙",callback);
+	},
+	function(callback){
+		terms.gen_by_word("燕",callback);
+	},
+	function(callback){
+		terms.gen_by_word("水",callback);
+	},
+	function(callback){
+		terms.gen_by_word("中",callback);
+	},
+	function(callback){
+		terms.gen_by_word("游",callback);
+	},
 ],function(err,res){
-	console.log(res[0]);
+	if(err)console.log(err)
+	for (var i = 0; i < res.length; i++) {
+		console.log(res[i])
+	};
 });
-
