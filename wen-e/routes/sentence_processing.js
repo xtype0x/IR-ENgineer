@@ -3,6 +3,7 @@
 
 var mongoose = require('mongoose');
 var _ = require('underscore');
+var async = require('async');
 var sc = require('../cutcut/sentencecutter.js');
 
 var ptt_article = mongoose.model('ptt_article');
@@ -90,13 +91,52 @@ exports.article_to_sentence = function(req, res){
 exports.search_word = function(req, res){
     //搜尋符合字串的句子
 
-    console.log(req.body.string);
+    // console.log(req.body.string);
     // console.log(string[0]);
     var arr = [];
-    _.each(string,function(val){
-        arr.push(search_db(val));
-    });
+    var string = "中秋節快樂";
 
+    async.eachSeries(string,function(val,call){
+      // console.log("o asy");
+      async.series([
+        function(callback){
+          // console.log("asy");
+          search_db(val,callback);
+        }
+      ],function(err,res){
+        // console.log("res");
+        arr.push(res[0]);
+        call();
+      });
+    },function(err){
+      return res.json(arr);
+    });
+    // async.eachSeries(string,function(val,call){
+    //   async.series([
+    //     function(callback){
+    //       search_db(val,string.indexOf(val),arr);
+    //     }
+    //   ],function(err,res){
+    //     console.log(res[0]);
+    //     arr.push(res[0])
+    //     call();
+    //   });
+    // },function(err){
+    //   return res.json(arr);
+    // });
+    // _.each(string,function(val,idx){
+
+    //     search_db(val,string.indexOf(val),arr);
+        
+    //     if(string.indexOf(val)==(string.length-1)){
+    //         console.log("fin");
+    //         res.json(arr);
+    //     };
+    //   // console.log(val,string.indexOf(val),arr);
+        
+    // });
+    // console.log(arr);
+    // res.json(arr);
     // sentence.find({ content : },null,{
     //     sort:{
     //         date_added: -1 //Sort by Date Added DESC
@@ -119,18 +159,46 @@ exports.search_word = function(req, res){
 };
 
 
-function search_db(word){
-
+function search_db(word,cal){
+    // console.log(word);
     sentence.find({"content": new RegExp("^"+word+".*")}, function(err, data) {
+        var ans="";
         if(err) console.log(err);
-        if(data!=null){
-            console.log(data[(Math.floor((data.length)*Math.random())%data.length)].content);
-            return data[(Math.floor((data.length)*Math.random())%data.length)].content;
+        if(data.length!==0){
+
+          // console.log(data.length);
+              if(data[(Math.floor((data.length)*Math.random())%data.length)]!=undefined){
+                 ans = data[(Math.floor((data.length)*Math.random())%data.length)].content;
+                 return cal(null,ans);
+              }
 
         }
         else{
-          // console.log(data);
-        // //get kens' api
+
+          // //get kens' api
+          // console.log("138");
+            sc.googleTransAPI(word, function(err, result){
+                if (result != undefined) {
+                  // console.log(idx);
+                  sentence.find({"rome": result.rome }, function(err, data) {
+                    if(data.length!==0){
+                        if(data[(Math.floor((data.length)*Math.random())%data.length)].content!=undefined){
+                          ans = data[(Math.floor((data.length)*Math.random())%data.length)].content;
+                          return cal(null,ans);
+                        }
+                    }
+                    else{
+                        return cal(null,"no data");
+                    }
+                      
+                  });
+                }
+                else{
+                  return cal(null,"no data");
+                }
+            });
+
+        
         //     sentence.find(({$where:"this.rome.length=5"}).limit(-1).skip(Math.floor(db.sentence.count()*Math.random())).next(),function(err, data) {
 
         //     }
