@@ -10,7 +10,7 @@ module.exports = {
 		async.whilst(
 		    function () { return loop; },
 		    function (callback) {
-		    	longestTerm(sentence, function(err, data){
+		    	longestTerm4(sentence.substring(0,4), function(err, data){
 					resultArr.push(data);
 					if(sentence.length == data.length){
 						loop = false;
@@ -86,8 +86,17 @@ function googletrans(word, callback){
         	// for debug
         	// console.log(body);
         	var object = JSON.parse(body);
-        	if((object[1] == 'zh-CN') || (object[1] == 'zh-TW') || (object[1] == 'ja')){
+        	if(isNoUse(object[1])){
         		callback(null, undefined);
+        	}
+        	else if(isCommon(object[1])){
+        		var wordData = {
+        			name: word,
+        			length: word.length,
+        			type: ['common'],
+        			rome: object[0][1][0]
+        		};
+        		callback(null, wordData);
         	}
         	else{
         		var wordData = {
@@ -133,4 +142,26 @@ function longestTerm4(word, callback){
 			});
 		}
 	});
+}
+
+function isCommon(exp){
+	var arr = ['zh-TW'];
+
+	for(var i = 0; i < 1; i++){
+		if(exp == arr[i]){
+			return true;
+		}
+	}
+	return false;
+}
+
+function isNoUse(exp){
+	var arr = ['zh-CN','ja','ca','mt'];
+
+	for(var i = 0; i < 4; i++){
+		if(exp == arr[i]){
+			return true;
+		}
+	}
+	return false;
 }
