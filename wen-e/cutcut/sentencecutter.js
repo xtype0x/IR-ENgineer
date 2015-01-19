@@ -10,15 +10,23 @@ module.exports = {
 		async.whilst(
 		    function () { return loop; },
 		    function (callback) {
-		    	longestTerm4(sentence.substring(0,4), function(err, data){
-					resultArr.push(data);
-					if(sentence.length == data.length){
-						loop = false;
-					}
-					sentence = sentence.substring(data.length, sentence.length);
+		    	if(sentence.length == 0){
+		    		loop = false;
+		    		callback();
+		    	}
+		    	else{
+		    		longestTerm4(sentence.substring(0,4), function(err, data){
+		    		    if(data == undefined){
+		    		    	sentence = sentence.substring(1, sentence.length);
+		    		    }
+		    		    else{
+		    		    	resultArr.push(data);
+		    		    	sentence = sentence.substring(data.length, sentence.length);
+		    		    }
 
-					callback();
-				});
+		    			callback();
+		    		});
+		    	}
 		    },
 		    function (err) {
 		        callbackF(null, resultArr);
@@ -136,12 +144,11 @@ function longestTerm4(word, callback){
 }
 
 function isNoUse(exp){
-	var arr = ['zh-CN','zh-TW','ja','ca','mt'];
-
-	for(var i = 0; i < 5; i++){
-		if(exp == arr[i]){
-			return true;
-		}
+	
+	if(!exp[0][1]){
+		return true;
 	}
-	return false;
+	else{
+		return false;
+	}
 }
