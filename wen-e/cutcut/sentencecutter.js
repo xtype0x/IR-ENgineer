@@ -89,15 +89,6 @@ function googletrans(word, callback){
         	if(isNoUse(object[1])){
         		callback(null, undefined);
         	}
-        	else if(isCommon(object[1])){
-        		var wordData = {
-        			name: word,
-        			length: word.length,
-        			type: ['common'],
-        			rome: object[0][1][0]
-        		};
-        		callback(null, wordData);
-        	}
         	else{
         		var wordData = {
         			name: word,
@@ -144,21 +135,10 @@ function longestTerm4(word, callback){
 	});
 }
 
-function isCommon(exp){
-	var arr = ['zh-TW'];
-
-	for(var i = 0; i < 1; i++){
-		if(exp == arr[i]){
-			return true;
-		}
-	}
-	return false;
-}
-
 function isNoUse(exp){
-	var arr = ['zh-CN','ja','ca','mt'];
+	var arr = ['zh-CN','zh-TW','ja','ca','mt'];
 
-	for(var i = 0; i < 4; i++){
+	for(var i = 0; i < 5; i++){
 		if(exp == arr[i]){
 			return true;
 		}

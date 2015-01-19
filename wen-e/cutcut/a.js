@@ -19,11 +19,6 @@ function findDocuments(db, callback) {
   var collection = db.collection('terms');
   // Find some documents
   collection.find({}).toArray(function(err, docs) {
-  	if(err){
-  		console.log(err);
-  	}
-    console.log("Found the following records");
-    console.dir(docs);
     callback(docs);
-  });      
+  }); 
 }

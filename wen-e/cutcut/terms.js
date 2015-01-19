@@ -1,14 +1,13 @@
 var googleTrans = require('./googletrans.js').translate,
 	fs = require('fs'),
 	async = require('async'),
-	mongo = require('mongodb'),
-	config = require('../config');
+	mongo = require('mongodb');
 
 
 
 module.exports = {
 	gen_by_word : function(word, cal){
-		mongo.connect("mongodb://"+config.db_user+":"+config.db_passwd+"@ds063240.mongolab.com:63240/weng_e",function(err,db){
+		mongo.connect("mongodb://ENgineer:enen@ds063240.mongolab.com:63240/weng_e",function(err,db){
 			if(err){
 				console.log("error:"+err);
 				return cal(null,undefined);
