@@ -1,67 +1,45 @@
 var request = require('request');
 var async = require('async');
 
-module.exports = {
+var cond = true;
+var word = '寒假基';
+var result;
 
-	longestTerm : function(word, callbackF){
+async.whilst(
+    function () { return cond; },
+    function (callback) {
+    	googletrans(word, function(err, data){
+    		if(data != undefined){
+    			result = data;
+    			cond = false;
+    		}
+    		else{
+    			word = word.substring(0, word.length - 1);
+    		}
+    		callback();
+    	});
+    },
+    function (err, data) {
+        console.log(result);
+    }
+);
+// var count = 0;
 
-		var cond = true;
-		var wordF = word;
-		var result;
+// async.whilst(
+//     function () { return cond; },
+//     function (callback) {
+//         count++;
+//         console.log('a');
+//         if(count == 10){
+//         	cond = false;
+//         }
+//         setTimeout(callback, 1000);
+//     },
+//     function (err) {
+//         // 5 seconds have passed
+//     }
+// );
 
-		async.whilst(
-		    function () { return cond; },
-		    function (callback) {
-		    	googletrans(wordF, function(err, data){
-		    		if(data != undefined){
-		    			result = data;
-		    			cond = false;
-		    		}
-		    		else{
-		    			wordF = wordF.substring(0, wordF.length - 1);
-		    		}
-		    		callback();
-		    	});
-		    },
-		    function (err) {
-		        callbackF(null, result);
-		    }
-		);
-	},
-
-	longestTerm4 : function(word, callback){
-
-		googletrans(word, function(err, data){
-			if(data != undefined){
-				callback(null, data);
-			}
-			else{
-				googletrans(word.substring(0, 3), function(err, data){
-					if(data != undefined){
-						callback(null, data);
-					}
-					else{
-						googletrans(word.substring(0, 2), function(err, data){
-							if(data != undefined){
-								callback(null, data);
-							}
-							else{
-								googletrans(word.substring(0, 1), function(err, data){
-									callback(null, data);
-								});
-							}
-						});
-					}
-				});
-			}
-		});
-	}
-};
-
-
-// googleTrans(word, function(err, data){
-// 	console.log(data);
-// });
 
 function googletrans(word, callback){
 

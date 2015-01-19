@@ -9,6 +9,7 @@
     "express": "3.12.1",
     "ejs": "*",
     "node-segment": "*",
-    "request": "*"
+    "request": "*",
+    "async": "*"
   }
 }
