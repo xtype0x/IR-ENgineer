@@ -33,6 +33,13 @@ module.exports = {
 		    }
 		);
 	},
+
+	googleTransAPI : function(word, callback){
+		googletrans(word, function(err, data){
+			
+			callback(null, data);
+		});
+	}
 	
 };
 
