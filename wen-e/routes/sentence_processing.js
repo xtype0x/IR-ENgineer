@@ -1,3 +1,6 @@
+// 對sentence這個collection做處理
+
+
 var mongoose = require('mongoose');
 var _ = require('underscore');
 
@@ -6,7 +9,7 @@ var ptt_article = mongoose.model('ptt_article');
 var sentence = mongoose.model('sentence');
 
 exports.article_list = function(req, res){
-
+// 列出所有的articel list
    	ptt_article.find({},null,{
 	    // skip:0, // Starting Row
 	    // limit:3, // Ending Row
@@ -22,7 +25,7 @@ exports.article_list = function(req, res){
 };
 
 exports.sentence_list = function(req, res){
-
+//列出所有的sentence list
       sentence.find({},null,{
        // skip:0, // Starting Row
        // limit:3, // Ending Row
@@ -39,7 +42,7 @@ exports.sentence_list = function(req, res){
 
 
 exports.article_to_sentence = function(req, res){
-
+//把文章切成句子
 	var json_arr = [];
 
    	ptt_article.find({},null,{
@@ -54,6 +57,7 @@ exports.article_to_sentence = function(req, res){
    		_.each(data,function(each_article){
             var arr = [];
             var str = "";
+            each_article.title = each_article.title.replace("\r","");
    			// var article_part = val.article.split("\r\n");
    			_.each(each_article.article.split("\r\n"),function(line){
    				// console.log(":"+elem);
@@ -105,10 +109,56 @@ exports.article_to_sentence = function(req, res){
    		res.json(json_arr);
     });
 
+};
+
+
+exports.search_word = function(req, res){
+    //搜尋符合字串的句子
+
+    console.log(req.body.string);
+    // console.log(string[0]);
+    var arr = [];
+    _.each(string,function(val){
+        arr.push(search_db(val));
+    });
+
+    // sentence.find({ content : },null,{
+    //     sort:{
+    //         date_added: -1 //Sort by Date Added DESC
+    //     }
+    // }, function(err, data) {
+    //     if (err) throw err;
+    //     res.json({sentence_list:data});
+    // });  
+    // var firstword = string[0];
+
+    // sentence.findOne({content: new RegExp('^search_word'+firstword+'.*')}, function(err, data) {
+
+
+
+//db.terms.find({$where:"this.rome.length=5"}).limit(-1).skip(Math.floor(db.terms.count()*Math.random())).next()
+
+
+
 
 };
 
 
-function callback(){
-   console.log("update");
+function search_db(word){
+
+    sentence.find({"content": new RegExp("^"+word+".*")}, function(err, data) {
+        if(err) console.log(err);
+        if(data!=null){
+            console.log(data[(Math.floor((data.length)*Math.random())%data.length)].content);
+            return data[(Math.floor((data.length)*Math.random())%data.length)].content;
+
+        }
+        else{
+          // console.log(data);
+        // //get kens' api
+        //     sentence.find(({$where:"this.rome.length=5"}).limit(-1).skip(Math.floor(db.sentence.count()*Math.random())).next(),function(err, data) {
+
+        //     }
+        }
+    });
 }

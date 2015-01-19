@@ -10,6 +10,8 @@
     "jade": "*",
     "mongoose": "*",
     "path":"*",
-    "underscore":"*"
+    "underscore":"*",
+    "node-segment":"*",
+    "request":"*"
   }
 }
