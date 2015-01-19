@@ -10,7 +10,7 @@ module.exports = {
 		async.whilst(
 		    function () { return loop; },
 		    function (callback) {
-		    	longestTerm(sentence, function(err, data){
+		    	longestTerm4(sentence.substring(0,4), function(err, data){
 					resultArr.push(data);
 					if(sentence.length == data.length){
 						loop = false;
@@ -86,7 +86,7 @@ function googletrans(word, callback){
         	// for debug
         	// console.log(body);
         	var object = JSON.parse(body);
-        	if((object[1] == 'zh-CN') || (object[1] == 'zh-TW') || (object[1] == 'ja')){
+        	if(isNoUse(object[1])){
         		callback(null, undefined);
         	}
         	else{
@@ -133,4 +133,15 @@ function longestTerm4(word, callback){
 			});
 		}
 	});
+}
+
+function isNoUse(exp){
+	var arr = ['zh-CN','zh-TW','ja','ca','mt'];
+
+	for(var i = 0; i < 5; i++){
+		if(exp == arr[i]){
+			return true;
+		}
+	}
+	return false;
 }

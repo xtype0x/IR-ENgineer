@@ -2,7 +2,7 @@ var sentencecutter = require('./sentencecutter.js');
 var terms = require("./terms"),
 	async = require("async");
 
-var sentence = '寒假基本上練球還是禮拜四跟禮拜天';
+var sentence = '其他特殊字元沒問題';
 
 
 async.series([
