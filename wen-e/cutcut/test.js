@@ -8,5 +8,6 @@ var googleTrans = require('./googletrans.js').translate;
 
 var word = '你我他';
 
-var a = googleTrans(word[0]);
-console.log(a);
+googleTrans(word[0], function(data){
+	console.log(data);
+});
