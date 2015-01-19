@@ -7,6 +7,10 @@
   },
   "dependencies": {
     "express": "3.12.1",
-    "jade": "*"
+    "ejs": "*",
+    "mongodb": "*",
+    "node-segment": "*",
+    "request": "*",
+    "async": "*"
   }
 }
